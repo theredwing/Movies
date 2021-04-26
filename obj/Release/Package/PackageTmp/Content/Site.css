@@ -1,0 +1,193 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.BoldTitle {
+    color: white;
+    font-weight: bold;
+}
+
+.Data {
+    color: aqua;
+}
+
+
+.GridData {
+    color: blue;
+}
+
+.txtBox {
+    width: 410px;
+}
+
+.txtBoxBigWidth {
+    width:1000px;
+}
+
+.listBox {
+    background-color: yellow;
+    padding-bottom: 420px;
+    font-weight: bold;
+}
+
+.clsbutton {
+    font-weight: bold;
+    background-color: darkturquoise;
+    color: black;
+    height: 30px;
+    width: 75px;
+}
+
+.Error {
+    color: red;
+    font-weight: bold;
+}
+
+.SrchBox {
+    border: solid 2px green;
+    background-color: blue;
+    color: white;
+    font-weight: bold;
+ }
+
+.Grid { border: solid 2px green; }
+
+.Grid td
+{
+    border: solid 3px #FFFFFF;
+    margin: 3px 3px 3px 3px;
+    font-family: Arial;
+    padding: 5px 5px 5px 5px;
+    text-align: center;
+    border: solid 2px green; 
+}
+
+.GridHeader
+{
+    font-weight: bold;
+    background-color: tan;
+    text-align: center;
+    cursor: pointer;
+}
+
+
+.Back
+{
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+}
+
+
+.GridDetail
+{
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+}
+
+.GridDetail a
+{
+    text-decoration: none;
+}
+
+.GridDetail a:hover
+{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.GridHeaderNoSort
+{
+    cursor: none;
+    font-weight: bold;
+    background-color: tan;
+    text-align: center;
+}
+
+.GridHeader a
+{
+    text-decoration: none;
+}
+
+.GridHeader a:hover
+{
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}
+
+.GridItem, .GridAltItem
+{
+    font-size: smaller;
+}
+
+.GridItem
+{
+    background-color: LightGoldenrodYellow;
+}
+
+.GridAltItem
+{
+    background-color: PaleGoldenrod;
+}
+
+.GridPgNum
+{
+    color: lightgreen;
+    cursor: none;
+}
+
+.GridPager a, .GridPager span
+{
+    /*display: flex;*/
+    height: 15px;
+    width: 15px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: inset;
+}
+
+.GridPager a:hover
+{
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}
+
+.GridPager a
+{
+    color: white;
+    /*border: 1px solid green;*/
+}
+
+.GridPager span
+{
+    background-color: white;
+    color: #000;
+    border: 1px solid #3AC0F2;
+}
+

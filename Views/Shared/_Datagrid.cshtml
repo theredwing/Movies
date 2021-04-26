@@ -1,0 +1,35 @@
+﻿@model IList<Movies.Models.Datagrid>
+
+@{ 
+    ViewBag.Title = "MovieList";
+    Movies.Models.SortingPagingInfo info = ViewBag.SortingPagingInfo;
+    Movies.Models.Movie mv = ViewBag.Movie;
+}
+
+@using (Html.BeginForm("List", "Home", FormMethod.Post))
+{
+    if (mv != null)
+    {
+        @Html.Hidden("id", mv.MovieID)
+
+        <table class="Datagrid" align="center" width="80%">
+            <tr>
+                <th>MOVIE</th>
+                <th>DESCRIPTION</th>
+            </tr>
+
+            @*@{int i = 1};*@
+            @foreach (var item in Model)
+            {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Movies.MovieTitle)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Movies.Description)
+                        </td>
+                    </tr>
+            }
+        </table>
+    }
+}

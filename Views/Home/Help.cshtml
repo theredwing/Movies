@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewBag.Title = "Help";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Help</h2>
+
+@using (Html.BeginForm("Help", "Home"))
+{
+    <div class="SrchBox">
+        <h2>This program is for prospective employers or tech afficionados to view.  The movie results displayed in the datagrid will be the movies that I have seen rather than the movies in
+            existence.  Therefore, if the user enters "Death Wish" in the movie title; only movies 1, 2 and 4 will appear in the datagrid since I never saw Death Wish 3 or 5.</h2>
+        <h2><u>If selecting SearchAndMaintain From The Main Menu, observe the following examples:</u></h2>
+        <table align="center" class="BoldTitle">
+            <tr>
+                <td valign="top">
+                    <i>Movie:</i>  Lost
+                    <i>Actor:</i>  Ford
+                </td>
+                <td valign="top">
+                    Example displays all movies having "Lost" in the title *** AND *** "Ford" in the actor's name
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <i>Movie:</i>  Lost
+                    <i>Crew Title:</i>  Director
+                </td>
+                <td valign="top">
+                    Example displays all movies having "Lost" in the title *** AND *** having a listing for a director rather than the director being null
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <i>Crew Name:</i>  Allen
+                    <i>Crew Title:</i>  Director
+                    <i>Category:</i>  Comedy
+                </td>
+                <td valign="top">
+                    Example displays all movies having a director listed *** AND *** director name is "Allen" *** AND *** Category is Comedy
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <i>Crew Name:</i>  Allen
+                    <i>Crew Title:</i>  Director
+                    <i>Category:</i>  Comedy, Drama, Romantic Comedy
+                </td>
+                <td valign="top">
+                    Example displays all movies having a director listed *** AND *** director name is "Allen" *** AND *** (Category is Comedy ** OR ** Drama ** OR ** Romantic Comedy)
+                </td>
+            </tr>
+        </table>
+    </div>
+}

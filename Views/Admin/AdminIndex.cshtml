@@ -1,0 +1,547 @@
+﻿@model Movies.Models.AdminV
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Movies.Models.SortingPagingInfo info = ViewBag.vbSortingPaging;
+    Movies.Models.Additions misc = ViewBag.vbMisc;
+}
+
+<script type="text/javascript">
+    function redirect(id, desc, title, srchname, merge) {
+        var url;
+
+        if (merge === undefined) {
+            url = '/Admin/EditDesc?id=' + id + '&desc=' + desc + '&title=' + title + '&srchname=' + srchname
+            window.location.href = url;
+        }
+        else {
+            url = '/Admin/MergeNames?id=' + id + '&person=' + desc + '&title=' + title + '&srchname=' + srchname;
+            window.location.href = url;
+        }
+    }
+
+    function Delete(id, person, title, toDel) {
+        if (confirm('Are you sure you want to delete this record? (' + toDel + ')')) {
+            window.location.href = '/Admin/AdminIndex?intID=' + id + '&strName=' + person + '&title=' + title + '&delete=1';
+        }
+        else
+            return;
+    }
+
+    $(document).ready(function () {
+        switch ($('#Tab').val())
+        {
+            case "Names":
+                $('#idNames').show();
+                $('#idPos').hide();
+                $('#idCats').hide();
+                break;
+            case "Pos":
+                $('#idNames').hide();
+                $('#idPos').show();
+                $('#idCats').hide();
+                break;
+            case "Cat":
+                $('#idNames').hide();
+                $('#idPos').hide();
+                $('#idCats').show();
+                break;
+            default:
+                $('#idNames').hide();
+                $('#idPos').hide();
+                $('#idCats').hide();
+        }
+
+        $("#idliNames").click(function () {
+            $('#idNames').show();
+            $('#idPos').hide();
+            $('#idCats').hide();
+        });
+
+        $("#idliPos").click(function () {
+            $('#idNames').hide();
+            $('#idPos').show();
+            $('#idCats').hide();
+            $("#GroupName").val("Pos");
+            $("#EditPageAction").val("Initial Load");
+            $("form").submit();
+        });
+
+        $("#idliCats").click(function () {
+            $('#idNames').hide();
+            $('#idPos').hide();
+            $('#idCats').show();
+            $("#GroupName").val("Cat");
+            $("#EditPageAction").val("Initial Load");
+            $("form").submit();
+        });
+
+        //Click on the header and the datagrid will be sorted ascending of descending for that particular column
+        $("#GridHeaderName").click(function (evt, i) {
+            if ($("#SortDirection").val() == "")
+                $("#SortDirection").val("ascending");
+            else {
+                if ($("#SortDirection").val() == "ascending") {
+                    $("#SortDirection").val("descending");
+                }
+                else {
+                    $("#SortDirection").val("ascending");
+                }
+            }
+
+            $("#EditPageAction").val("Sort");
+            $("#GroupName").val("Name");
+            $('#idNames').show();
+            $('#idPos').hide();
+            $('#idCats').hide();
+            $("form").submit();
+        });
+
+        //Click on a page number below the datagrid and control will skip to the corresponding page in the datagrid
+        $(".GridPagerName").click(function (evt) {
+            pageindex = $(evt.target).data("pageindex");
+            $("#CurrentPageIndex").val(pageindex);
+            $("#EditPageAction").val("Page");
+            $("#GroupName").val("Name");
+            $('#idNames').show();
+            $('#idPos').hide();
+            $('#idCats').hide();
+            $("form").submit();
+        });
+
+        //Click on the header and the datagrid will be sorted ascending of descending for that particular column
+        $("#GridHeaderPos").click(function () {
+            if ($("#SortDirection").val() == "")
+                $("#SortDirection").val("ascending");
+            else {
+                if ($("#SortDirection").val() == "ascending") {
+                    $("#SortDirection").val("descending");
+                }
+                else {
+                    $("#SortDirection").val("ascending");
+                }
+            }
+
+            $("#EditPageAction").val("Sort");
+            $("#GroupName").val("Pos");
+            $('#idNames').hide();
+            $('#idPos').show();
+            $('#idCats').hide();
+            $("form").submit();
+        });
+
+        //Click on the header and the datagrid will be sorted ascending of descending for that particular column
+        $("#GridHeaderCat").click(function () {
+            if ($("#SortDirection").val() == "")
+                $("#SortDirection").val("ascending");
+            else {
+                if ($("#SortDirection").val() == "ascending") {
+                    $("#SortDirection").val("descending");
+                }
+                else {
+                    $("#SortDirection").val("ascending");
+                }
+            }
+
+            $("#EditPageAction").val("Sort");
+            $("#GroupName").val("Cat");
+            $('#idNames').hide();
+            $('#idPos').hide();
+            $('#idCats').show();
+            $("form").submit();
+        });
+
+        //Click on a page number below the datagrid and control will skip to the corresponding page in the datagrid
+        $(".GridPagerCat").click(function (evt) {
+            pageindex = $(evt.target).data("pageindex");
+            $("#CurrentPageIndex").val(pageindex);
+            $("#EditPageAction").val("Page");
+            $("#GroupName").val("Cat");
+            $('#idNames').hide();
+            $('#idPos').hide();
+            $('#idCats').show();
+            $("form").submit();
+        });
+
+        $("#btnSearchName").click(function () {
+            $("#EditPageAction").val("Search");
+            $("#GroupName").val("Name");
+            $('#idNames').show();
+        });
+
+        $("#btnAddName").click(function () {
+            $("#EditPageAction").val("Add");
+            $("#GroupName").val("Name");
+            $('#idNames').toggle();
+        });
+
+        $("#btnAddPos").click(function () {
+            $("#EditPageAction").val("Add");
+            $("#GroupName").val("Pos");
+        });
+
+        $("#btnAddCat").click(function () {
+            $("#EditPageAction").val("Add");
+            $("#GroupName").val("Cat");
+        });
+
+        $("#EditName").click(function (evt) {
+            $("#EditPageAction").val("Edit");
+            $("#GroupName").val("Name");
+        });
+
+        $("#EditPos").click(function (evt) {
+            $("#EditPageAction").val("Edit");
+            $("#GroupName").val("Pos");
+        });
+
+        $("#EditCat").click(function (evt) {
+            $("#EditPageAction").val("Edit");
+            $("#GroupName").val("Cat");
+        });
+    });
+</script>
+
+@using (Html.BeginForm("AdminIndex", "Admin", FormMethod.Post))
+{
+    <div class="BoldTitle">
+        <h2>Administration</h2>
+        @Html.Hidden("SortField", info.SortField)
+        @Html.Hidden("SortDirection", info.SortDirection)
+        @Html.Hidden("PageCount", info.PageCount)
+        @Html.Hidden("PageSize", info.PageSize)
+        @Html.Hidden("CurrentPageIndex", info.CurrentPageIndex)
+        @Html.Hidden("ErrMsg", ViewData["Message"])
+        @Html.Hidden("EditPageAction", misc.EditPageAction)
+        @Html.Hidden("GroupName", misc.GroupName)
+        @Html.Hidden("SrchName", Model.strName)
+        @Html.Hidden("Tab", Model.strTab)
+
+        @if (Model.TriggerOnLoad)
+        {
+            <text>
+                <script type="text/javascript">
+                    alert(document.getElementById("ErrMsg").value);
+                </script>
+            </text>
+        }
+
+        <div class="TabbedPanels" id="TabbedPanels1">
+            <table>
+                <tr>
+                    <td>
+                        <ul class="TabbedPanelsTabGroup">
+                            <li class="TabbedPanelsTab" id="idliNames" tabindex="10">Names</li>
+                            <li class="TabbedPanelsTab" id="idliPos" tabindex="20">Positions</li>
+                            <li class="TabbedPanelsTab" id="idliCats" tabindex="30">Categories</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label id="idAddMsg" class="YellowBold">@ViewData["AddMsg"]</label>
+                    </td>
+                </tr>
+            </table>
+            <div id="idNames" style="display:none">
+                <table>
+                    <tr>
+                        <td><label id="lblName">Name: </label></td>
+                        <td style="height: 20px;">
+                            @Html.TextAreaFor(model => model.strName, new
+                   {
+                       @class = "txtBox",
+                       id = "txtName",
+                       tabIndex = 10,
+                       maxlength = 50,
+                       PlaceHolder = "Part of Actor/Crew Name",
+                       onfocus = "focusFunction('lblName')",
+                       onblur = "blurFunction('lblName')"
+                   })
+
+                        </td>
+                        <td width="5"></td>
+                        <td><input id="btnSearchName" value="Search" type="submit" class="clsbutton" onclick="'@Url.Action("AdminIndex", "Admin")'" /></td>
+                        <td width="1"></td>
+                        <td><input id="btnAddName" value="Add" type="submit" class="clsbutton" onclick="'@Url.Action("AdminIndex", "Admin")'" /></td>
+                        <td width="1"></td>
+                        <td>
+                            <table align="center">
+                                <tr>
+                                    <td>
+                                        <table class="Grid" align="center" width="600">
+                                            <tr>
+                                                <th id="GridHeaderName" class="GridHeader"><a onclick='@Url.Action("AdminIndex", "Admin")' data-sortfield="Name" class="GridHeader">NAME</a></th>
+                                            </tr>
+
+                                            @{int iName = 1;}
+                                            @{int intTempName = 0;}
+
+                                            @if (Model.Names != null)
+                                            {
+                                                foreach (var item in Model.Names)
+                                                {
+                                                    var assignEditCall = "redirect(" + item.NamesLUID + ", '" + item.Name.Replace("'", "%39") + "', 'Name','" + Model.strName + "')";
+                                                    var assignDelCall = "javascript:Delete(" + item.NamesLUID + ", '" + Model.strName + "', 'Name', '" + item.Name + "')";
+                                                    var @assignMergeCall = "redirect(" + item.NamesLUID + ", '" + item.Name.Replace("'", "%39") + "', 'Name','" + Model.strName + "', 1)";
+
+                                                    <tr class="@(iName++ % 2 == 0 ? "GridItem" : "GridAltItem")">
+                                                        <td class="GridData">
+                                                            @Html.DisplayFor(modelItem => item.Name)
+                                                        </td>
+                                                        <td class="GridData">
+                                                            <a id="EditName" onclick="@assignEditCall"><img src="../Images/icons8-Edit-50.png" title="Edit Record" alt="Edit Record" class="Grid" height="30" width="30" /></a>
+                                                        </td>
+                                                        <td class="GridData">
+                                                            <a onclick="@assignDelCall"><img src="../Images/icons8_Delete_Row_48px.png" title="Delete Record" alt="Delete Record" class="Grid" height="30" width="30" /></a>
+                                                        </td>
+                                                        <td class="GridData">
+                                                            <a onclick="@assignMergeCall"><img src="../Images/merge.png" title="Merge Names" alt="Merge Names" class="Grid" height="30" width="30" /></a>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                                <tr>
+                                                    <td>
+                                                        <table width="600">
+                                                            @while (intTempName < info.PageCount)
+                                                            {
+                                                                <tr>
+                                                                    @for (var jName = intTempName; jName < info.PageCount; jName++)
+                                                                    {
+                                                                        if (jName == info.CurrentPageIndex)
+                                                                        {
+                                                                            <td><span class="GridPgNum">@(jName + 1)</span></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td><span class="GridPagerName"><a onclick="@Url.Action("AdminIndex", "Admin")" data-pageindex="@jName" class="GridPagerName">@(jName + 1)</a></span></td>
+                                                                        }
+
+                                                                        if (((jName + 1) % 20) == 0 && jName > 0)
+                                                                        {
+                                                                            intTempName = jName + 1;
+                                                                            break;
+                                                                        }
+
+                                                                        if (jName == (info.PageCount - 1))
+                                                                        {
+                                                                            intTempName = info.PageCount;
+                                                                            break;
+                                                                        }
+                                                                    }
+
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="idPos" style="display:none">
+                <table>
+                    <tr>
+                        <td><label id="lblPos">Position: </label></td>
+                        <td style="height: 20px;">
+                            @Html.TextAreaFor(model => model.strPos, new
+                       {
+                           @class = "txtBox",
+                           id = "txtPos",
+                           tabIndex = 10,
+                           maxlength = 50,
+                           onfocus = "focusFunction('lblPos')",
+                           onblur = "blurFunction('lblPos')"
+                       })
+
+                        </td>
+                        <td width="5"></td>
+                        <td><input id="btnAddPos" value="Add" type="submit" class="clsbutton" onclick="'@Url.Action("AdminIndex", "Admin")'" /></td>
+                        <td width="1"></td>
+                        <td>
+                            <table align="center">
+                                <tr>
+                                    <td>
+                                        <table class="Grid" align="center" width="600">
+                                            <tr>
+                                                <th id="GridHeaderPos" class="GridHeader"><a onclick='@Url.Action("AdminIndex", "Admin")' data-sortfield="Position" class="GridHeader">POSITION</a></th>
+                                            </tr>
+
+                                            @{int iPos = 1;}
+                                            @{int intTempPos = 0;}
+
+                                            @if (Model.Pos != null)
+                                            {
+                                                foreach (var item in Model.Pos)
+                                                {
+                                                    var assignEditCall = "redirect(" + item.PositionsLUID + ", '" + item.Position.Replace("'", "%39") + "', 'Pos','" + Model.strPos + "')";
+                                                    var assignDelCall = "javascript:Delete(" + item.PositionsLUID + ", '" + Model.strPos + "', 'Pos', '" + item.Position + "')";
+
+                                                    <tr class="@(iPos++ % 2 == 0 ? "GridItem" : "GridAltItem")">
+                                                        <td class="GridData">
+                                                            @Html.DisplayFor(modelItem => item.Position)
+                                                        </td>
+                                                        <td class="GridData">
+                                                            <a id="EditPosition" onclick="@assignEditCall"><img src="../Images/icons8-Edit-50.png" title="Edit Record" alt="Edit Record" class="Grid" height="30" width="30" /></a>
+                                                        </td>
+                                                        <td class="GridData">
+                                                            <a onclick="@assignDelCall"><img src="../Images/icons8_Delete_Row_48px.png" title="Delete Record" alt="Delete Record" class="Grid" height="30" width="30" /></a>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                                <tr>
+                                                    <td>
+                                                        <table width="600">
+                                                            @while (intTempPos < info.PageCount)
+                                                            {
+                                                                <tr>
+                                                                    @for (var jPos = intTempPos; jPos < info.PageCount; jPos++)
+                                                                    {
+                                                                        if (jPos == info.CurrentPageIndex)
+                                                                        {
+                                                                            <td><span class="GridPgNum">@(jPos + 1)</span></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td><span class="GridPagerName"><a onclick="@Url.Action("AdminIndex", "Admin")" data-pageindex="@jPos" class="GridPagerName">@(jPos + 1)</a></span></td>
+                                                                        }
+
+                                                                        if (((jPos + 1) % 20) == 0 && jPos > 0)
+                                                                        {
+                                                                            intTempPos = jPos + 1;
+                                                                            break;
+                                                                        }
+
+                                                                        if (jPos == (info.PageCount - 1))
+                                                                        {
+                                                                            intTempPos = info.PageCount;
+                                                                            break;
+                                                                        }
+                                                                    }
+
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="idCats" style="display:none">
+                <table>
+                    <tr>
+                        <td><label id="lblCat">Category: </label></td>
+                        <td style="height: 20px;">
+                            @Html.TextAreaFor(model => model.strCat, new
+                       {
+                           @class = "txtBox",
+                           id = "txtCat",
+                           tabIndex = 10,
+                           maxlength = 50,
+                           onfocus = "focusFunction('lblCat')",
+                           onblur = "blurFunction('lblCat')"
+                       })
+
+                        </td>
+                        <td width="5"></td>
+                        <td><input id="btnAddCat" value="Add" type="submit" class="clsbutton" onclick="'@Url.Action("AdminIndex", "Admin")'" /></td>
+                        <td width="1"></td>
+                        <td>
+                            <table align="center">
+                                <tr>
+                                    <td>
+                                        <table class="Grid" align="center" width="600">
+                                            <tr>
+                                                <th id="GridHeaderCat" class="GridHeader"><a onclick='@Url.Action("AdminIndex", "Admin")' data-sortfield="Category" class="GridHeader">CATEGORY</a></th>
+                                            </tr>
+
+                                            @{int iCat = 1;}
+                                            @{int intTempCat = 0;}
+
+                                            @if (Model.Cats != null)
+                                            {
+                                                foreach (var item in Model.Cats)
+                                                {
+                                                    var assignEditCall = "redirect(" + item.CategoryLUID + ", '" + item.CategoryName.Replace("'", "%39") + "', 'Cat','" + Model.strCat + "')";
+                                                    var assignDelCall = "javascript:Delete(" + item.CategoryLUID + ", '" + Model.strCat + "', 'Cat', '" + item.CategoryName + "')";
+
+                                                    <tr class="@(iCat++ % 2 == 0 ? "GridItem" : "GridAltItem")">
+                                                        <td class="GridData">
+                                                            @Html.DisplayFor(modelItem => item.CategoryName)
+                                                        </td>
+                                                        <td class="GridData">
+                                                            <a id="EditPosition" onclick="@assignEditCall"><img src="../Images/icons8-Edit-50.png" title="Edit Record" alt="Edit Record" class="Grid" height="30" width="30" /></a>
+                                                        </td>
+                                                        <td class="GridData">
+                                                            <a onclick="@assignDelCall"><img src="../Images/icons8_Delete_Row_48px.png" title="Delete Record" alt="Delete Record" class="Grid" height="30" width="30" /></a>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                                <tr>
+                                                    <td>
+                                                        <table width="600">
+                                                            @while (intTempCat < info.PageCount)
+                                                            {
+                                                                <tr>
+                                                                    @for (var jCat = intTempCat; jCat < info.PageCount; jCat++)
+                                                                    {
+                                                                        if (jCat == info.CurrentPageIndex)
+                                                                        {
+                                                                            <td><span class="GridPgNum">@(jCat + 1)</span></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td><span class="GridPagerCat"><a onclick="@Url.Action("AdminIndex", "Admin")" data-pageindex="@jCat" class="GridPagerCat">@(jCat + 1)</a></span></td>
+                                                                        }
+
+                                                                        if (((jCat + 1) % 20) == 0 && jCat > 0)
+                                                                        {
+                                                                            intTempCat = jCat + 1;
+                                                                            break;
+                                                                        }
+
+                                                                        if (jCat == (info.PageCount - 1))
+                                                                        {
+                                                                            intTempCat = info.PageCount;
+                                                                            break;
+                                                                        }
+                                                                    }
+
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

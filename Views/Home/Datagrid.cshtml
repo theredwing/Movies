@@ -1,0 +1,250 @@
+﻿@model IList<Movies.Models.Datagrid>
+
+@{
+    ViewBag.Title = "Movie List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Movies.Models.SortingPagingInfo info = ViewBag.SortingPagingInfo;
+    Movies.Models.DataGridParams dgParams = ViewBag.DataGridParams;
+    Movies.Models.Movie mv = ViewBag.Movie;
+    Movies.Models.MovieV mvV = ViewBag.MovieSrchVars;
+}
+
+<script type="text/javascript">
+    function redirect(id, urlpath, strMovieTitle, strDescription, strMovieTitleSrch, strActorNameSrch, strCrewNameSrch, intCrewTitleIDSrch, strCrewTitleSrch, strSelectedCategoriesSrch,
+        SortFieldFromPrev, SortDirectionFromPrev, PageCountFromPrev, PageSizeFromPrev, CurrentPageIndexFromPrev, strCategory, FromEdit) {
+        //Edit the movie record.  Current datagrid parameters are passed so that when control returns to this page, it is remembered how the datagrid was sorted and what was the last page it was on
+        window.location.href = '/Movies/Edit?id=' + id + '&urlpath=' + urlpath + '&strMovieTitle=' + strMovieTitle + '&strDescription=' + strDescription + '&strMovieTitleSrch=' + strMovieTitleSrch
+            + '&strDescSrch=' + strDescSrch + '&strActorNameSrch=' + strActorNameSrch + '&strCrewNameSrch=' + strCrewNameSrch
+            + '&intCrewTitleIDSrch=' + intCrewTitleIDSrch
+            + '&strCrewTitleSrch=' + strCrewTitleSrch + '&strSelectedCategoriesSrch=' + strSelectedCategoriesSrch + '&SortFieldFromPrev=' + SortFieldFromPrev
+            + '&SortDirectionFromPrev=' + SortDirectionFromPrev + '&PageCountFromPrev=' + PageCountFromPrev + '&PageSizeFromPrev=' + PageSizeFromPrev
+            + '&CurrentPageIndexFromPrev=' + CurrentPageIndexFromPrev + '&strCategory=' + strCategory + '&FromEdit=' + FromEdit;
+    }
+
+    $(document).ready(function () {
+        //Click on the column header to sort the datagrid
+        $(".GridHeader").click(function (evt, i) {
+            var sortfield = $(evt.target).data("sortfield");
+
+            if ($("#SortField").val() == sortfield) {
+                if ($("#SortDirection").val() == "ascending") {
+                    $("#SortDirection").val("descending");
+                }
+                else {
+                    $("#SortDirection").val("ascending");
+                }
+            }
+            else {
+                $("#SortField").val(sortfield);
+                $("#SortDirection").val("ascending");
+            }
+
+            evt.stopPropagation();
+            $("form").submit();
+        });
+
+        //Go to a new page in the datagrid
+        $(".GridPager").click(function (evt) {
+            var pageindex = $(evt.target).data("pageindex");
+            $("#CurrentPageIndex").val(pageindex);
+            evt.stopPropagation();
+            $("form").submit();
+        });
+
+        if ($("#FromEdit").val() == "Y") {
+            //If coming from the edit page, we are now leaving it and returning the the datagrid (previous) page.  We need to remember the sorting and paging specs for the datagrid on the datagrid page.
+            //These explain how the original datagrids were sorted and what page it left off on
+            $("#SortField").val($("#SortFieldFromPrev").val());
+            $("#SortDirection").val($("#SortDirectionFromPrev").val());
+            $("#CurrentPageIndex").val($("#CurrentPageIndexFromPrev").val());
+            $("#FromEdit").val("N");
+            $("form").submit();
+        }
+    });
+</script>
+
+@using (Html.BeginForm("Datagrid", "Home", FormMethod.Post))
+{
+    @Html.Hidden("HeaderClick")
+    @Html.Hidden("PageClick")
+    @Html.Hidden("SortField", info.SortField)
+    @Html.Hidden("SortDirection", info.SortDirection)
+    @Html.Hidden("PageCount", info.PageCount)
+    @Html.Hidden("PageSize", info.PageSize)
+    @Html.Hidden("CurrentPageIndex", info.CurrentPageIndex)
+    @Html.Hidden("id", mv.MovieID)
+    @Html.Hidden("SortFieldFromPrev", dgParams.SortFieldFromPrev)
+    @Html.Hidden("SortDirectionFromPrev", dgParams.SortDirectionFromPrev)
+    @Html.Hidden("PageCountFromPrev", dgParams.PageCountFromPrev)
+    @Html.Hidden("PageSizeFromPrev", dgParams.PageSizeFromPrev)
+    @Html.Hidden("CurrentPageIndexFromPrev", dgParams.CurrentPageIndexFromPrev)
+    @Html.Hidden("strMovieTitleSrch", dgParams.strMovieTitleSrch)
+    @Html.Hidden("strDescSrch", dgParams.strDescSrch)
+    @Html.Hidden("strActorNameSrch", dgParams.strActorNameSrch)
+    @Html.Hidden("strCrewNameSrch", dgParams.strCrewNameSrch)
+    @Html.Hidden("intCrewTitleIDSrch", dgParams.intCrewTitleIDSrch)
+    @Html.Hidden("strCrewTitleSrch", dgParams.strCrewTitleSrch)
+    @Html.Hidden("FromEdit", dgParams.FromEdit)
+    @Html.Hidden("strCategory", mvV.strCategory)
+    @Html.Hidden("strSelectedCategoriesSrch", dgParams.strSelectedCategoriesSrch)
+    @Html.Hidden("strDescription", mvV.strDescription)
+    @Html.Hidden("strActorName", mvV.strActorName)
+    @Html.Hidden("strCrewName", mvV.strCrewName)
+    @Html.Hidden("intCrewTitleID", mvV.intCrewTitleID)
+    @Html.Hidden("strCrewTitle", mvV.strCrewTitle)
+    @Html.Hidden("strSelectedCategories", mvV.strSelectedCategories)
+
+    //What was the selection criteria from the starting search page?
+    <h1></h1>
+    <table>
+        <tr>
+            <td>
+                <table class="SrchBox" align="center" width="400">
+                    <tr>
+                        <td align="right">
+                            <label>Movie: </label>
+                        </td>
+                        <td>
+                            <label class="Data">@mvV.strMovieTitleSrch</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <label>Description: </label>
+                        </td>
+                        <td>
+                            <label class="Data">@mvV.strDescription</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <label>Actor: </label>
+                        </td>
+                        <td>
+                            <label class="Data">@mvV.strActorName</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <label>Crew Member: </label>
+                        </td>
+                        <td>
+                            <label class="Data">@mvV.strCrewName</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <label>Crew Title: </label>
+                        </td>
+                        <td>
+                            <label class="Data">@mvV.strCrewTitle</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <label>Categories: </label>
+                        </td>
+                        <td>
+                            <label class="Data">@mvV.strCategory</label>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="50"></td>
+            <td>
+                <table class="Grid" align="center" width="600">
+                    <tr>
+                        <th class="GridHeader"><a onclick='@Url.Action("Datagrid", "Home")' data-sortfield="MovieTitle" class="GridHeader">MOVIE</a></th>
+                        <th class="GridHeaderNoSort">DESCRIPTION</th>
+                    </tr>
+
+                    @{int i = 1;}
+                    @{int intTempj = 0;}
+                    @{bool blnCont;}
+
+                    @foreach (var item in Model)
+                    {
+                        var urlpath = "/Home/Search/";
+                        //For selecting a movie link to edit/view the data for that movie
+                        if (mvV.strMovieTitleSrch == null)
+                        {
+                            mvV.strMovieTitleSrch = "";
+                        }
+                        if (mvV.strDescription == null)
+                        {
+                            mvV.strDescription = "";
+                        }
+                        if (mvV.strActorName == null)
+                        {
+                            mvV.strActorName = "";
+                        }
+                        if (mvV.strCrewName == null)
+                        {
+                            mvV.strCrewName = "";
+                        }
+                        if (dgParams.strCrewTitleSrch == null)
+                        {
+                            dgParams.strCrewTitleSrch = "";
+                        }
+
+                        var assignFunctionCall = "redirect(" + item.MovieID.ToString() + ", '" + urlpath + "', '" + item.MovieTitle.Replace("\'", "") + "', '" + ("" + item.Description).Replace("\'", "")
+                                                                 + "', '" + ("" + mvV.strMovieTitleSrch).Replace("\'", "") + "', '" + ("" + mvV.strDescription).Replace("\'", "") + "', '" + ("" + mvV.strActorName).Replace("\'", "") + "', '"
+                                                                 + ("" + mvV.strCrewName).Replace("\'", "") + "', '" + mvV.intCrewTitleID.ToString() + "', '" + ("" + dgParams.strCrewTitleSrch.ToString()) + "', '"
+                                                                 + ("" + mvV.strSelectedCategories) + "', '" + dgParams.SortFieldFromPrev + "', '" + dgParams.SortDirectionFromPrev + "', '"
+                                                                 + dgParams.PageCountFromPrev + "', '" + dgParams.PageSizeFromPrev + "', '" + dgParams.CurrentPageIndexFromPrev + "', '" + ("" + mvV.strCategory)
+                                                                 + "', 'Y')";
+                        //var assignFunctionCall = "redirect(" + item.MovieID.ToString() + ")";
+
+                        <tr class="@(i++ % 2 == 0 ? "GridItem" : "GridAltItem")">
+                            <td>
+                                <a onclick="@assignFunctionCall;" class="GridDetail">@Html.DisplayFor(modelItem => item.MovieTitle)</a>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                        </tr>
+                    }
+
+                    <tr>
+                        <td colspan="2">
+                            <table width="600">
+                                @while (intTempj < info.PageCount)
+                                {
+                                    <tr>
+                                        @for (var j = intTempj; j < info.PageCount; j++)
+                                        {
+                                            blnCont = false;
+
+                                            if (j == info.CurrentPageIndex)
+                                            {
+                                                <td><span class="GridPgNum">@(j + 1)</span></td>
+                                            }
+                                            else
+                                            {
+                                                <td><span class="GridPager"><a onclick="@Url.Action("List", "Home")" data-pageindex="@j" class="GridPager">@(j + 1)</a></span></td>
+                                            }
+
+                                            if (((j + 1) % 20) == 0 && j > 0)
+                                            {
+                                                intTempj = j + 1;
+                                                blnCont = true;
+                                                break;
+                                            }
+
+                                            if (j == (info.PageCount - 1))
+                                            {
+                                                intTempj = info.PageCount;
+                                                break;
+                                            }
+                                        }
+
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+}

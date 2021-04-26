@@ -1,0 +1,103 @@
+﻿@model IList<Movies.Models.DatagridCat>
+
+@{
+    ViewBag.Title = "Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Movies.Models.SortingPagingInfo info = ViewBag.SortingPagingInfo;
+    Movies.Models.DataGridParams dgParams = ViewBag.DataGridParams;
+    Movies.Models.MovieCatsAll mvCA = ViewBag.MovieCatsAll;
+    Movies.Models.CategoryLU cats = ViewBag.Cats;
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Click on the column header to sort the datagrid
+        $(".GridHeader").click(function (evt, i) {
+            var sortfield = $(evt.target).data("sortfield");
+
+            if ($("#SortField").val() == sortfield) {
+                if ($("#SortDirection").val() == "ascending") {
+                    $("#SortDirection").val("descending");
+                }
+                else {
+                    $("#SortDirection").val("ascending");
+                }
+            }
+            else {
+                $("#SortField").val(sortfield);
+                $("#SortDirection").val("ascending");
+            }
+
+            evt.stopPropagation();
+            $("form").submit();
+        });
+
+        //Go to a new page in the datagrid
+        $(".GridPager").click(function (evt) {
+            var pageindex = $(evt.target).data("pageindex");
+            $("#CurrentPageIndex").val(pageindex);
+            evt.stopPropagation();
+            $("form").submit();
+        });
+
+        if ($("#FromEdit").val() == "Y") {
+            //If coming from the edit page, we are now leaving it and returning the the datagrid (previous) page.  We need to remember the sorting and paging specs for the datagrid on the datagrid page.
+            //These explain how the original datagrids were sorted and what page it left off on
+            $("#SortField").val($("#SortFieldFromPrev").val());
+            $("#SortDirection").val($("#SortDirectionFromPrev").val());
+            $("#CurrentPageIndex").val($("#CurrentPageIndexFromPrev").val());
+            $("#FromEdit").val("N");
+            $("form").submit();
+        }
+    });
+</script>
+
+<h2 class="BoldTitle">Categories</h2>
+
+
+@using (Html.BeginForm("Categories", "Movies", FormMethod.Post))
+{
+    @Html.Hidden("HeaderClick")
+    @Html.Hidden("PageClick")
+    @Html.Hidden("SortField", info.SortField)
+    @Html.Hidden("SortDirection", info.SortDirection)
+    @Html.Hidden("PageCount", info.PageCount)
+    @Html.Hidden("PageSize", info.PageSize)
+    @Html.Hidden("CurrentPageIndex", info.CurrentPageIndex)
+    @Html.Hidden("id", mvCA.MovieID)
+
+    <table class="BoldTitle">
+        <tr>
+            <th>
+                Description
+            </th>
+            <th>
+                Category
+            </th>
+            <th></th>
+        </tr>
+
+        @{int intMovie = 0;}
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            if(item.MovieID != intMovie)
+            {
+                <td width="100">
+                    @Html.DisplayFor(modelItem => item.MovieTitle)
+                </td>
+            }
+            else
+            {
+                <td width="100"></td>
+            }
+
+            <td width="10"></td>
+            <td>
+                @Html.CheckBox(item.Category.ToString(), true)
+            </td>
+        </tr>
+        }
+        </table>
+}

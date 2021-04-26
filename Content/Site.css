@@ -1,0 +1,289 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.Alert {
+    color: red;
+    font-weight: bold;
+}
+
+.BoldTitle {
+    color: white;
+    font-weight: bold;
+}
+
+.BoldTitle a {
+    color: lightgreen;
+}
+
+.Data {
+    color: aqua;
+}
+
+.NewUserLink {
+    color: yellow;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.GridData {
+    color: blue;
+}
+
+.txtBox {
+    height: 30px;
+    width: 410px;
+}
+
+.txtBoxBigWidth {
+    width:1000px;
+}
+
+.listBox {
+    background-color: yellow;
+    padding-bottom: 420px;
+    font-weight: bold;
+}
+
+.listBoxSmall {
+    background-color: yellow;
+    padding-bottom: 420px;
+    font-weight: bold;
+    height: 100px;
+}
+
+.clsbutton {
+    font-weight: bold;
+    background-color: darkturquoise;
+    color: black;
+    height: 30px;
+    width: 75px;
+}
+
+.clsbutton-wide {
+    width: 115px;
+}
+
+.Error {
+    color: red;
+    font-weight: bold;
+}
+
+.hidden{
+       display:none;
+    }
+
+.modalDialog{
+       display:block;
+       position:fixed;
+       z-index: 1;
+}
+
+.WhiteBack {
+    background-color: antiquewhite;
+    border-style: inset;
+    border-radius: 20px;
+}
+
+.WhiteBackPlain {
+    background-color: antiquewhite;
+}
+
+.WhiteBold {
+    color: white;
+    font-weight: bold;
+}
+
+.YellowBold {
+    color: yellow;
+    font-weight: bold;
+}
+
+.AquaBold {
+    color: aqua;
+    font-weight: bold;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.SrchBox {
+    border: solid 2px green;
+    background-color: blue;
+    color: white;
+    font-weight: bold;
+ }
+
+.Grid { border: solid 2px green; }
+
+.Grid td
+{
+    border: solid 3px #FFFFFF;
+    margin: 3px 3px 3px 3px;
+    font-family: Arial;
+    padding: 5px 5px 5px 5px;
+    text-align: center;
+    border: solid 2px green; 
+}
+
+.GridHeader
+{
+    font-weight: bold;
+    background-color: tan;
+    text-align: center;
+    cursor: pointer;
+}
+
+
+.Back
+{
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+}
+
+
+.GridDetail
+{
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+}
+
+.GridDetail a
+{
+    text-decoration: none;
+}
+
+.GridDetail a:hover
+{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.GridHeaderNoSort
+{
+    cursor: none;
+    font-weight: bold;
+    background-color: tan;
+    text-align: center;
+}
+
+.GridHeader a
+{
+    text-decoration: none;
+}
+
+.GridHeader a:hover
+{
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}
+
+.GridItem, .GridAltItem
+{
+    font-size: smaller;
+}
+
+.GridItem
+{
+    background-color: LightGoldenrodYellow;
+}
+
+.GridAltItem
+{
+    background-color: PaleGoldenrod;
+}
+
+.GridPgNum
+{
+    color: lightgreen;
+    cursor: none;
+}
+
+.SmallWhiteRectangle
+{
+    width:50px;
+    height:50px;
+    border:5px;
+    background-color:white;
+}
+
+.GridPager a, .GridPager span, .GridPagerName a, .GridPagerName span, , .GridPagerCat a, .GridPagerCat span
+{
+    /*display: flex;*/
+    height: 15px;
+    width: 15px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: inset;
+}
+
+.GridPager a:hover, .GridPagerName a:hover, .GridPagerCat a:hover
+{
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}
+
+.GridPager a, .GridPagerName a, .GridPagerCat a
+{
+    color: white;
+    /*border: 1px solid green;*/
+}
+
+.GridPager span, .GridPagerName span, .GridPagerCat span
+{
+    background-color: white;
+    color: #000;
+    border: 1px solid #3AC0F2;
+}
+

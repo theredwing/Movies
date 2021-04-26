@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewBag.Title = "Chapter7Menus";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Reponsive Navigation Menu</title>
+    <link href="../_css/site.css" rel="stylesheet">
+    <link href="smartmenus/sm-core-css.css" rel="stylesheet">
+    <link href="smartmenus/sm-sample.css" rel="stylesheet">
+    <script src="../_js/jquery.min.js"></script>
+    <script src="smartmenus/jquery.smartmenus.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.sm').smartmenus({
+                showfunction: function ($ul, complete) {
+                    $ul.slideDown(250, complete);
+                },
+
+                hidefunction: function ($ul, complete) {
+                    $ul.slideUp(250, complete);
+                }
+            }); // end smartmenus
+        }); // end ready
+    </script>
+</head>
+<body class="BoldTitle">
+    <div class="wrapper">
+        <header>
+            JAVASCRIPT <span class="amp">&amp;</span> jQUERY: THE&nbsp;MISSING&nbsp;MANUAL
+        </header>
+        <div class="content">
+            <div class="main">
+                <h1>Solutions</h1>
+                <ul class="sm sm-sample">
+                    <li>
+                        <ul>
+                            <li>@Html.ActionLink("Chapter 4", "Chapter4", "JQuery")</li>
+                            <li>@Html.ActionLink("Chapter 7", "Chapter7", "JQuery")</li>
+                            <li>@Html.ActionLink("Chapter 8", "Chapter8", "JQuery")</li>
+                            <li>@Html.ActionLink("Chapter 9", "Chapter9", "JQuery")</li>
+                            <li>@Html.ActionLink("Chapter 13 - Flickr/JSonp", "Chapter13", "JQuery")</li>
+                            <li>@Html.ActionLink("Chapter 14", "Chapter14", "JQuery")</li>
+                            <li>@Html.ActionLink("Console", "Console", "JQuery")</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <footer>
+            <p>JavaScript &amp; jQuery: The Missing Manual, 3rd Edition, by <a href="http://sawmac.com/">David McFarland</a>. Published by <a href="http://oreilly.com/">O'Reilly Media, Inc</a>.</p>
+        </footer>
+    </div>
+</body>
+</html>
+

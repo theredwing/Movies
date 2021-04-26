@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "Chapter9";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Chapter9</title>
+    <link href="~/Content/themes/base/datepicker.css" rel="stylesheet">
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet">
+    <script src="../_js/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#hello').dialog();
+        }); // end ready
+    </script>
+</head>
+<body class="BoldTitle">
+    <div id="hello" title="Hello World">
+        <p>Testing...</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+﻿
+@{
+    ViewBag.Title = "Chapter14";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!doctype html>
+<head>
+    <meta charset="UTF-8">
+    <title>My To-Do List</title>
+    <link href="css/todo.css" rel="stylesheet">
+    <link href="css/jquery-ui.min.css" rel="stylesheet">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    @*<script src="todo.js"></script>*@
+</head>
+<script>
+$(document).ready(function () {
+    var strAppend;
+
+    $("#todo").click(function () {
+        $("#new_todo").attr("class", "modalDialog");
+    });
+
+    $("#todoComp").click(function () {
+        $('input[type^="checkbox"]').each(function () {
+            //alert($(this).attr('title'));
+
+            //for each item checked, put in completed list and remove from checked list
+            if ($(this).prop('checked')) {
+                //alert($(this).attr('title') + " completed");
+                //Move from the todo list to the completed list
+                $('#completed').append('<li>' + $(this).attr('title') + '</li>');
+                //Removes the whole <li> tag from the todo list
+                $(this).parent().remove();
+            }
+        });
+
+        $("#new_todo").attr("class", "hidden");
+    });
+
+    $('#btnAddTask').click(function () {
+        if ($('#task').val() == '')
+            alert("Cannot Add a Blank Task");
+        else {
+            $("#new_todo").attr("class", "hidden");
+            strAppend = '<li><input type="checkbox" title="' + $('#task').val() + '">' + $('#task').val() + '</li>';
+            $('#todo-list').append(strAppend);
+        }
+    });
+
+    $('#btnCloseTask').click(function () {
+        $("#new_todo").attr("class", "hidden");
+    });
+}); // end ready
+</script>
+<html>
+<body class="BoldTitle">
+    <h2>Chapter14</h2>
+    <div class="container">
+        <div id="to-do">
+            <h1>My To-do List</h1>
+
+            <div class="SmallWhiteRectangle">
+                <table>
+                    <tr>
+                        <td><a id="todo"><img src="../Images/todo.png" title="To Do item" alt="To Do item" class="Grid" height="50" width="50" /></a></td>
+                        <td width="25"></td>
+                        <td><a id="todoComp"><img src="../Images/Gavel-Law.png" title="To Do item Completed" alt="To Do item Completed" class="Grid" height="50" width="50" /></a></td>
+                    </tr>
+                </table>
+            </div>
+
+            <h2>To Be Done</h2>
+            <ul id="todo-list"></ul>
+        </div>
+        <div id="completed">
+            <h2>Completed Tasks</h2>
+            <ul id="completed-list"></ul>
+        </div>
+        <div id="new_todo" title="Add to-do item" class="hidden">
+            <p>
+                <button id="btnAddTask">Add Task</button>
+                <input type="text" name="task" id="task"/>
+                <button id="btnCloseTask">Close</button>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+

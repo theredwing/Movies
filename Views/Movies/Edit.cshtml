@@ -1,0 +1,438 @@
+﻿@model Movies.Models.MovieEditV
+@using System.Web.UI.WebControls
+@using System.Data.Entity
+@using System.Linq;
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Movies.Models.Movie mv = ViewBag.Movie;
+    //Movies.Models.MovieCategory mc = ViewBag.MovieCategory;
+    Movies.Models.MovieNamesPosition mnp = ViewBag.MovieNamesPosition;
+    Movies.Models.SortingPagingInfo info = ViewBag.SortingPagingInfo;
+    Movies.Models.DataGridParams dgParams = ViewBag.DataGridParams;
+    //Movies.Models.DataGridParams dgParamsENP = ViewBag.dgParamsENP;
+}
+
+<script type="text/javascript">
+    function redirectAddNew()
+    {
+        //alert(document.getElementById("id").value + " in redirectAddNew()");
+        if (document.getElementById("txtMovie").value == null) {
+            alert("Names Cannot be Entered Until a Movie Title is!")
+        }
+        else {
+            window.location.href = '/Movies/EditNamesPositions?xid=' + document.getElementById("id").value + '&position=null&namesID=0&positionID=0&MovieNamesPositionID=0&add=a&strTitle=' +
+                                   document.getElementById("txtMovie").value + '&strDesc=' + document.getElementById("txtDesc").value;
+        }
+    }
+
+    function redirect(id, person, position, namesID, positionID, MovieNamesPositionID, add) {
+        //Edit the movie record.  Current datagrid parameters are passed so that when control returns to this page, it is remembered how the datagrid was sorted and what was the last page it was on
+        if (add === undefined) {
+            //alert(id + " id at add === undefined");
+            window.location.href = '/Movies/EditNamesPositions?xid=' + id + '&position=' + position + '&namesID=' + namesID + '&positionID=' + positionID
+                             + '&MovieNamesPositionID=' + MovieNamesPositionID + '&strTitle='
+                             + document.getElementById("txtMovie").value + '&strDesc=' + document.getElementById("txtDesc").value;
+        }
+        else {
+            if (document.getElementById("txtMovie").value == null) {
+                alert("Names Cannot be Entered Until a Movie Title is!")
+            }
+            else {
+                //alert(id + " id at add is defined");
+                window.location.href = '/Movies/EditNamesPositions?xid=' + document.getElementById("id").value + '&position=' + position + '&namesID=' + namesID + '&positionID=' + positionID
+                                 + '&MovieNamesPositionID=' + MovieNamesPositionID + '&add=' + add;
+            }
+        }
+    }
+
+    function Delete(id, person, position, namesID, positionID, MovieNamesPositionID) {
+        if (confirm('Are you sure you want to delete this record?'))
+            window.location.href = '/Movies/EditNamesPositions?xid=' + id + '&position=' + position + '&namesID=' + namesID + '&positionID=' + positionID
+                                 + '&MovieNamesPositionID=' + MovieNamesPositionID + '&Delete=y' + '&strTitle='
+                                 + document.getElementById("txtMovie").value + '&strDesc=' + document.getElementById("txtDesc").value;
+        else
+            return;
+    }
+
+    function DeleteRec(id) {
+        if (confirm('Are you sure you want to delete this record?'))
+            window.location.href = '/Movies/DeleteMovie?xid=' + id;
+        else
+            return;
+    }
+
+    var urlReferrer;
+    var pageindex;
+    var pagesahead;
+    var pagetogobackto;
+    var savecancel;
+
+    $(document).ready(function () {
+        //if ($("#Model.TriggerOnLoad"))
+        //{
+        //    alert("Welcome");
+        //    $("#ErrMsg").dialog();
+        //}
+
+        if ($("#PagesAhead").val() == 0)
+        {
+            //Pressing the back button will cause control to return to at least one previous page
+            pagesahead = 1;
+            $("#PagesAhead").val(parseInt(pagesahead));
+        }
+
+        //Click on the header and the datagrid will be sorted ascending of descending for that particular column
+        $(".GridHeader").click(function (evt, i) {
+            var sortfield = $(evt.target).data("sortfield");
+
+            if ($("#SortField").val() == sortfield) {
+                if ($("#SortDirection").val() == "ascending") {
+                    $("#SortDirection").val("descending");
+                }
+                else {
+                    $("#SortDirection").val("ascending");
+                }
+            }
+            else {
+                $("#SortField").val(sortfield);
+                $("#SortDirection").val("ascending");
+            }
+
+            //Need to know how many pages the user skipped ahead, so when they press the back button the system will know what previous page to go to.  Example:  the user skips to a new page
+            //and the page counter is 1.  Example: the user skips to a new page and presses the header of a column in the datagrid twice to sort column ascending and then descending.  In that case,
+            //the page counter is 3 and the back buttom will need to simulate going back three pages in order to return to the previous page (main datagrid in this case.)
+            pagesahead = $("#PagesAhead").val();
+            pagesahead++;
+            //alert(pagesahead);
+            $("#PagesAhead").val(parseInt(pagesahead));
+            $("#EditPageAction").val("Sort");
+            evt.stopPropagation();
+            $("form").submit();
+        });
+
+        //Click on a page number below the datagrid and control will skip to the corresponding page in the datagrid
+        $(".GridPager").click(function (evt) {
+            pageindex = $(evt.target).data("pageindex");
+            $("#CurrentPageIndex").val(pageindex);
+            //Need to know how many pages the user skipped ahead, so when they press the back button the system will know what previous page to go to.  Example:  the user skips to a new page
+            //and the page counter is 1.  Example: the user skips to a new page and presses the header of a column in the datagrid twice to sort column ascending and then descending.  In that case,
+            //the page counter is 3 and the back buttom will need to simulate going back three pages in order to return to the previous page (main datagrid in this case.)
+            pagesahead = $("#PagesAhead").val();
+            pagesahead++;
+            //alert(pagesahead);
+            $("#PagesAhead").val(parseInt(pagesahead));
+            $("#EditPageAction").val("Page");
+            evt.stopPropagation();
+            $("form").submit();
+        });
+
+        $("#btnSave").click(function (evt) {
+            $("#EditPageAction").val("Save");
+        });
+
+        $("#btnCancel").click(function (evt) {
+            $("#EditPageAction").val("Cancel");
+        });
+
+        $("#btnAdd").click(function (evt) {
+            $("#EditPageAction").val("Add");
+        });
+
+        $("#btnDelete").click(function (evt) {
+            $("#EditPageAction").val("Delete");
+            $("#CatId").val($("#lstCategory").val());
+        });
+
+        $("#btnDeleteRec").click(function (evt) {
+            $("#EditPageAction").val("DeleteRec");
+        });
+
+        //$(".Back").click(function (evt) {
+        //    pagesahead = $("#PagesAhead").val();
+        //    $("#PagesAhead").val((parseInt('0')));
+        //    window.history.go(-pagesahead);
+        //});
+
+        $('#lstCategory').click(function () {
+            $("#lstCategory option:selected").css("font-weight", "bold");
+        });
+    });
+</script>
+
+@using (Html.BeginForm("Edit", "Movies", FormMethod.Post))
+{
+<div class="BoldTitle">
+    <h2>Edit</h2>
+    @Html.Hidden("SortField", info.SortField)
+    @Html.Hidden("SortDirection", info.SortDirection)
+    @Html.Hidden("PageCount", info.PageCount)
+    @Html.Hidden("PageSize", info.PageSize)
+    @Html.Hidden("CurrentPageIndex", info.CurrentPageIndex)
+    @Html.Hidden("SortFieldFromPrev", dgParams.SortFieldFromPrev)
+    @Html.Hidden("SortDirectionFromPrev", dgParams.SortDirectionFromPrev)
+    @Html.Hidden("PageCountFromPrev", dgParams.PageCountFromPrev)
+    @Html.Hidden("PageSizeFromPrev", dgParams.PageSizeFromPrev)
+    @Html.Hidden("CurrentPageIndexFromPrev", dgParams.CurrentPageIndexFromPrev)
+    @Html.Hidden("id", mv.MovieID)
+    @*@Html.Hidden("urlpath", ViewData["urlpath"])*@
+    @Html.Hidden("ErrMsg", ViewData["Message"])
+    @Html.Hidden("PagesAhead", info.PagesAhead)
+    @Html.Hidden("EditPageAction", info.EditPageAction)
+    @Html.Hidden("strMovieTitleSrch", dgParams.strMovieTitleSrch)
+    @Html.Hidden("strDescSrch", dgParams.strDescSrch)
+    @Html.Hidden("strActorNameSrch", dgParams.strActorNameSrch)
+    @Html.Hidden("strCrewNameSrch", dgParams.strCrewNameSrch)
+    @Html.Hidden("intCrewTitleIDSrch", dgParams.intCrewTitleIDSrch)
+    @Html.Hidden("strCrewTitleSrch", dgParams.strCrewTitleSrch)
+    @Html.Hidden("strSelectedCategoriesSrch", dgParams.strSelectedCategoriesSrch)
+    @Html.Hidden("strCategorySrch", dgParams.strCategorySrch)
+    @Html.Hidden("FromEdit", dgParams.FromEdit)
+    @*@Html.Hidden("xAction", dgParamsENP.xAction)*@
+    @Html.Hidden("SaveOrCancel", ViewData["SaveOrCancel"])
+    @Html.Hidden("CatId", 0)
+    @Html.Hidden("MovieAdded", Model.blnMovieAdded)
+
+
+    @if (Model.TriggerOnLoad)
+    {
+        <text>
+            <script type="text/javascript">
+                alert(document.getElementById("ErrMsg").value);
+            </script>
+        </text>
+    }
+
+    @*<text>
+            <script type="text/javascript">
+            </script>
+        </text>*@
+
+    <table>
+        <tr>
+            <td height="20">
+                @{var assignDelMovieRec = "javascript:DeleteRec(" + mv.MovieID.ToString() + ")";}
+                <a onclick="@assignDelMovieRec">
+                    <img src="../Images/DeleteRecord.jpg" title="Delete Record" alt="Delete Record" class="Grid" width="120" height="60" />
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table align="left">
+                    <tr>
+                        <td align="right"><label class="BoldTitle" id="lblMovie">Movie: </label></td>
+                        <td width="1"></td>
+                        <td>
+                            @Html.TextAreaFor(model => model.strMovieTitle, new
+                       {
+                           @class = "txtBoxBigWidth",
+                           id = "txtMovie",
+                           tabIndex = 10,
+                           maxlength = 200,
+                           onfocus = "focusFunction('lblMovie')",
+                           onblur = "blurFunction('lblMovie')"
+                       })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right"><label class="BoldTitle" id="lblDesc">Description: </label></td>
+                        <td width="1"></td>
+                        <td>
+                            @Html.TextAreaFor(model => model.strDesc, new
+                       {
+                           @class = "txtBoxBigWidth",
+                           id = "txtDesc",
+                           tabIndex = 20,
+                           maxlength = 100,
+                           onfocus = "focusFunction('lblDesc')",
+                           onblur = "blurFunction('lblDesc')"
+                       })
+                        </td>
+                    </tr>
+                    <tr><td colspan="3" height="20px"></td></tr>
+                </table>
+            </td>
+            <td>
+                <table align="center">
+                    <tr>
+                        <td colspan="2">
+                            <table class="Grid" align="center" width="600">
+                                <tr>
+                                    <th class="GridHeader"><a onclick='@Url.Action("Edit", "Movies")' data-sortfield="Name" class="GridHeader">NAME</a></th>
+                                    <th class="GridHeader"><a onclick='@Url.Action("Edit", "Movies")' data-sortfield="Position" class="GridHeader">POSITION</a></th>
+                                    <th><input id="btnAddNew" value="Add" type="button" class="clsbutton" onclick="javascript:redirectAddNew();" /></th>
+                                </tr>
+
+                                @{int i = 1;}
+                                @{int intTempj = 0;}
+                                @{bool blnCont;}
+
+                                @if (Model.NamesAndTitles == null)
+                                {
+                                    Model.NamesAndTitles = ViewBag.NamesAndTitles;
+                                }
+
+                                @if (Model.NamesAndTitles != null)
+                                {
+                                    foreach (var item in Model.NamesAndTitles)
+                                    {
+                                        var assignEditCall = "redirect(" + item.MovieID.ToString() + ", '" + item.Name.Replace("'", "") + "', '" + item.Position + "', " + +item.NamesID + ", " + item.PositionID + ", "
+                                                                                + item.MovieNamesPositionID.ToString() + ")";
+                                        var assignDelCall = "javascript:Delete(" + item.MovieID.ToString() + ", '" + item.Name + "', '" + item.Position + "', " + +item.NamesID + ", " + item.PositionID + ", "
+                                                                                    + item.MovieNamesPositionID.ToString() + ")";
+
+                                        <tr class="@(i++ % 2 == 0 ? "GridItem" : "GridAltItem")">
+                                            <td class="GridData">
+                                                @Html.DisplayFor(modelItem => item.Name)
+                                            </td>
+                                            <td class="GridData">
+                                                @Html.DisplayFor(modelItem => item.Position)
+                                            </td>
+                                            <td class="GridData">
+                                                <a onclick="@assignEditCall"><img src="../Images/icons8-Edit-50.png" title="Edit Record" alt="Edit Record" class="Grid" height="30" width="30" /></a>
+                                            </td>
+                                            <td class="GridData">
+                                                <a onclick="@assignDelCall"><img src="../Images/icons8_Delete_Row_48px.png" title="Delete Name" alt="Delete Name" class="Grid" height="30" width="30" /></a>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                    <tr>
+                                        <td colspan="2">
+                                            <table width="600">
+                                                @while (intTempj < info.PageCount)
+                                                {
+                                                    <tr>
+                                                        @for (var j = intTempj; j < info.PageCount; j++)
+                                                        {
+                                                            blnCont = false;
+
+                                                            if (j == info.CurrentPageIndex)
+                                                            {
+                                                                <td><span class="GridPgNum">@(j + 1)</span></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td><span class="GridPager"><a onclick="@Url.Action("Edit", "Movies")" data-pageindex="@j" class="GridPager">@(j + 1)</a></span></td>
+                                                            }
+
+                                                            if (((j + 1) % 20) == 0 && j > 0)
+                                                            {
+                                                                intTempj = j + 1;
+                                                                blnCont = true;
+                                                                break;
+                                                            }
+
+                                                            if (j == (info.PageCount - 1))
+                                                            {
+                                                                intTempj = info.PageCount;
+                                                                break;
+                                                            }
+                                                        }
+
+                                                    </tr>
+                                                }
+                                            </table>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table>
+                    <tr>
+                        <td align="right"><label class="BoldTitle" id="lblCategory">Category: </label></td>
+                        <td width="1"></td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <table>
+                                            <tr>
+                                                <td colspan="2">
+                                                    @Html.DropDownListFor(model => model.intCategoryID, (IEnumerable<SelectListItem>)ViewBag.intCategoryID, new
+                                               {
+                                                   id = "ddlCategory",
+                                                   tabIndex = 40,
+                                                   onfocus = "focusFunction('lblCategory')",
+                                                   onblur = "blurFunction('lblCategory')",
+                                               })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input id="btnAdd" value="Add" type="submit" class="clsbutton" onclick="'@Url.Action("Edit", "Movies")'" />
+                                                </td>
+                                                <td>
+                                                    <input id="btnDelete" value="Delete" type="submit" class="clsbutton" onclick="'@Url.Action("Edit", "Movies")'" />
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td height="5px"></td>
+                                    <td>
+                                        @if (ViewBag.vbSelectedCategoriesList != null)
+                                        {
+                                            @Html.ListBoxFor(model => model.SelectedCategoriesList, (IEnumerable<SelectListItem>)ViewBag.vbSelectedCategoriesList,
+                                                                        new
+                                                                        {
+                                                                            @class = "listBox",
+                                                                            id = "lstCategory",
+                                                                            tabIndex = 50,
+                                                                            onfocus = "focusFunction('lblCategory')",
+                                                                            onblur = "blurFunction('lblCategory')"
+                                                                        })
+                                        }
+                                        else
+                                        {
+                                            @Html.ListBox("listBox", new List<SelectListItem>())
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <table>
+                    <tr>
+                        @{var assignDelRecCall = "";}
+
+
+                        @if (Model.lstMovie != null)
+                        {
+                            foreach (var item in Model.lstMovie)
+                            {
+                                assignDelRecCall = "javascript:DeleteRec(" + item.MovieID.ToString() + ")";
+                            }
+                        }
+
+
+                        <td width="88"></td>
+                        <td>
+                            <input id="btnSave" value="Save" type="submit" class="clsbutton" onclick="'@Url.Action("Edit", "Movies")'" />
+                        </td>
+                        <td width="10"></td>
+                        <td>
+                            <input id="btnCancel" value="Cancel" type="submit" class="clsbutton" onclick="'@Url.Action("Edit", "Movies")'" />
+                        </td>
+                        <td width="10"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+                                        }
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

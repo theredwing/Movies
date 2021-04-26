@@ -1,0 +1,144 @@
+﻿@model Movies.Models.MergeNamesV
+
+@{
+    ViewBag.Title = "MergeNames";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Movies.Models.Errors xErr = ViewBag.Errors;
+    Movies.Models.Additions misc = ViewBag.vbMisc;
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnSave").click(function (evt) {
+            $("#EditPageAction").val("Save");
+        });
+
+        $("#btnCancel").click(function (evt) {
+            $("#EditPageAction").val("Cancel");
+        });
+    });
+</script>
+
+@using (Html.BeginForm("MergeNames", "Admin", FormMethod.Post))
+{
+    <div class="BoldTitle">
+        <h2>Merge Names</h2>
+        @Html.Hidden("xErrMsg", ViewData["Message"])
+        @Html.Hidden("strSrchName", Model.strSrchName)
+        @Html.Hidden("EditPageAction", misc.EditPageAction)
+
+
+        @if (Model.TriggerOnLoad)
+        {
+            <script type="text/javascript">
+                    alert(document.getElementById("xErrMsg").value);
+            </script>
+        }
+
+        <table align="left">
+            <tr>
+                <td style="color: red">*</td>
+                <td align="right"><label class="BoldTitle" id="lblName1">Name to Copy From and Dispose: </label></td>
+                <td>
+                    @Html.DropDownListFor(model => model.intName1From, (IEnumerable<SelectListItem>)ViewBag.vbNamesID, new
+                    {
+                       id = "idintName1From",
+                       tabIndex = 35,
+                       onfocus = "focusFunction('lblName1')",
+                       onblur = "blurFunction('lblName1')",
+                    })
+                </td>
+            </tr>
+            <tr>
+                <td style="color: red"></td>
+                <td align="right"><label class="BoldTitle" id="lblName2">Name to Copy From and Dispose: </label></td>
+                <td>
+                    @Html.DropDownListFor(model => model.intName2From, (IEnumerable<SelectListItem>)ViewBag.vbNamesID, new
+               {
+                   id = "idintName2From",
+                   tabIndex = 45,
+                   onfocus = "focusFunction('lblName2')",
+                   onblur = "blurFunction('lblName2')",
+               })
+                </td>
+            </tr>
+            <tr>
+                <td style="color: red"></td>
+                <td align="right"><label class="BoldTitle" id="lblName3">Name to Copy From and Dispose: </label></td>
+                <td>
+                    @Html.DropDownListFor(model => model.intName3From, (IEnumerable<SelectListItem>)ViewBag.vbNamesID, new
+               {
+                   id = "idintName3From",
+                   tabIndex = 55,
+                   onfocus = "focusFunction('lblName3')",
+                   onblur = "blurFunction('lblName3')",
+               })
+                </td>
+            </tr>
+            <tr>
+                <td style="color: red"></td>
+                <td align="right"><label class="BoldTitle" id="lblName4">Name to Copy From and Dispose: </label></td>
+                <td>
+                    @Html.DropDownListFor(model => model.intName4From, (IEnumerable<SelectListItem>)ViewBag.vbNamesID, new
+               {
+                   id = "idintName4From",
+                   tabIndex = 65,
+                   onfocus = "focusFunction('lblName4')",
+                   onblur = "blurFunction('lblName4')",
+               })
+                </td>
+            </tr>
+            <tr>
+                <td style="color: red"></td>
+                <td align="right"><label class="BoldTitle" id="lblName5">Name to Copy From and Dispose: </label></td>
+                <td>
+                    @Html.DropDownListFor(model => model.intName5From, (IEnumerable<SelectListItem>)ViewBag.vbNamesID, new
+               {
+                   id = "idintName5From",
+                   tabIndex = 75,
+                   onfocus = "focusFunction('lblName5')",
+                   onblur = "blurFunction('lblName5')",
+               })
+                </td>
+            </tr>
+            <tr>
+                <td style="color: red">*</td>
+                <td align="right"><label class="YellowBold" id="lblNameTo">Name to Copy To and Merge With: </label></td>
+                <td>
+                    @Html.DropDownListFor(model => model.intNameTo, (IEnumerable<SelectListItem>)ViewBag.vbNamesID, new
+               {
+                   id = "idintNameTo",
+                   tabIndex = 85,
+                   onfocus = "focusFunction('lblNameTo')",
+                   onblur = "blurFunction('lblNameTo')"
+               })
+                </td>
+            </tr>
+            <tr><td colspan="3" height="20px"></td></tr>
+            <tr>
+                <td colspan="2"></td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                <input id="btnSave" tabindex="95" value="Save" type="submit" class="clsbutton" onclick="'@Url.Action("MergeNames", "Admin")'" />
+                            </td>
+                            <td width="5"></td>
+                            <td>
+                                <input id="btnCancel" tabindex="100" value="Cancel" type="submit" class="clsbutton" onclick="'@Url.Action("MergeNames", "Admin")'" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+

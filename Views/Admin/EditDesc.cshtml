@@ -1,0 +1,80 @@
+﻿@model Movies.Models.EditDescV
+
+@{
+    ViewBag.Title = "EditDesc";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Movies.Models.Additions misc = ViewBag.vbMisc;
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnSave").click(function (evt) {
+            $("#EditPageAction").val("Edit");
+        });
+
+        $("#btnCancel").click(function (evt) {
+            $("#EditPageAction").val("CancelEdit");
+        });
+    });
+</script>
+
+
+@using (Html.BeginForm("EditDesc", "Admin", FormMethod.Post))
+{
+    <div class="BoldTitle">
+        @*<h2 id="Title">Edit Description</h2>*@
+        <h2></h2>
+        @Html.Hidden("ErrMsg", ViewData["Message"])
+        @Html.Hidden("EditPageAction", misc.EditPageAction)
+        @Html.Hidden("GroupName", misc.GroupName)
+        @Html.Hidden("intID", Model.intID)
+        @Html.Hidden("strSrchName", Model.strSrchName)
+
+        @if (Model.TriggerOnLoad)
+        {
+            <text>
+                <script type="text/javascript">
+                    alert(document.getElementById("ErrMsg").value);
+                </script>
+            </text>
+        }
+
+        <table>
+            <tr>
+                <td>
+                    @Html.Label(Model.strTitle + ":")
+                </td>
+                <td>
+                    @Html.TextAreaFor(model => model.strDesc, new
+                       {
+                           @class = "txtBox",
+                           id = "txtDesc",
+                           tabIndex = 10,
+                           maxlength = 50,
+                           PlaceHolder = "Part of Actor/Crew Name"
+                       })
+                </td>
+                <td width="5"></td>
+                <td>
+                    <input id="btnSave" value="Save" type="submit" class="clsbutton" onclick="'@Url.Action("EditDesc", "Admin")'" />
+                </td>
+                <td width="5"></td>
+                <td>
+                    <input id="btnCancel" value="Cancel" type="submit" class="clsbutton" onclick="'@Url.Action("EditDesc", "Admin")'" />
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+
+
+
+

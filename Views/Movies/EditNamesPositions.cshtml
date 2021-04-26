@@ -1,0 +1,145 @@
+﻿@model Movies.Models.MovieEditNamesPositionsV
+@using System.Web.UI.WebControls
+@using System.Data.Entity
+@using System.Linq;
+
+@{
+    ViewBag.Title = "EditNamesPositions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Movies.Models.SortingPagingInfo info = ViewBag.SortingPagingInfo;
+    Movies.Models.SortingPagingInfo infoENP = ViewBag.SortingPagingInfoENP;
+    Movies.Models.DataGridParams dgParams = ViewBag.DataGridParams;
+    Movies.Models.DataGridParams dgParamsENP = ViewBag.DataGridParamsENP;
+    Movies.Models.Errors xErr = ViewBag.Errors;
+    Movies.Models.MovieEditV mEv = ViewBag.Edit;
+}
+
+<script type="text/javascript">
+    @*@Model.JavascriptToRun*@
+
+    var savecancel;
+    var strName;
+    var pageindex;
+    var pagesahead;
+
+    $(document).ready(function () {
+        //alert("PagesAhead = " + $("#PagesAhead").val())
+
+        if ($("#PagesAhead").val() == 0) {
+            //Pressing the back button will cause control to return to at least one previous page
+            pagesahead = 1;
+            $("#PagesAhead").val(parseInt(pagesahead));
+        }
+
+        $("#btnCancel").click(function (evt) {
+            //pagesahead = $("#PagesAhead").val();
+            $("#xAction").val('Cancel');
+            //window.history.go(-pagesahead);
+            $("form").submit();
+        });
+
+        $("#btnSave").click(function (evt) {
+            //alert("#btnSave).click");
+            pagesahead = $("#PagesAhead").val();
+            //alert(pagesahead);
+            pagesahead++;
+            //alert(pagesahead);
+            $("#PagesAhead").val(pagesahead);
+        });
+
+        //$(".Back").click(function (evt) {
+        //    pagesahead = $("#PagesAhead").val();
+        //    $("#PagesAhead").val((parseInt('0')));
+        //    window.history.go(-pagesahead);
+        //});
+    });
+</script>
+
+
+@using (Html.BeginForm("EditNamesPositions", "Movies", FormMethod.Post))
+{
+<div class="BoldTitle">
+    <h2>Edit/Add Record</h2>
+    @*bookmark -- try an error class*@
+    @Html.Hidden("xErrMsg", xErr.Message)
+    @Html.Hidden("PagesAhead", infoENP.PagesAhead)
+    @Html.Hidden("SortField", infoENP.SortField)
+    @Html.Hidden("SortDirection", infoENP.SortDirection)
+    @Html.Hidden("PageCount", infoENP.PageCount)
+    @Html.Hidden("PageSize", infoENP.PageSize)
+    @Html.Hidden("CurrentPageIndex", infoENP.CurrentPageIndex)
+    @Html.Hidden("strMovieTitleSrch", dgParamsENP.strMovieTitleSrch)
+    @Html.Hidden("strDeptSrch", dgParamsENP.strDescSrch)
+    @Html.Hidden("strActorNameSrch", dgParamsENP.strActorNameSrch)
+    @Html.Hidden("strCrewNameSrch", dgParamsENP.strCrewNameSrch)
+    @Html.Hidden("intCrewTitleIDSrch", dgParamsENP.intCrewTitleIDSrch)
+    @Html.Hidden("strCrewTitleSrch", dgParamsENP.strCrewTitleSrch)
+    @Html.Hidden("strSelectedCategoriesSrch", dgParamsENP.strSelectedCategoriesSrch)
+    @Html.Hidden("strCategorySrch", dgParamsENP.strCategorySrch)
+    @Html.Hidden("xAction", dgParamsENP.xAction)
+    @Html.Hidden("blnMovieAdded", mEv.blnMovieAdded)
+    @Html.Hidden("MovieID", Model.MovieID)
+
+
+    @if (Model.TriggerOnLoad)
+    {
+        <script type="text/javascript">
+            alert(document.getElementById("xErrMsg").value);
+        </script>
+    }
+
+    <table align="left">
+        @*<tr>
+                <td colspan="2">
+                    <a onclick="@Url.Action(null)" class="Back">Back to List</a>
+                </td>
+            </tr>*@
+        <tr>
+            <td align="right"><label class="BoldTitle" id="lblName">Name: </label></td>
+            <td>
+                @Html.DropDownListFor(model => model.NamessID, (IEnumerable<SelectListItem>)ViewBag.vbNamesID, new
+           {
+               id = "NamessID",
+               tabIndex = 35,
+               onfocus = "focusFunction('lblName')",
+               onblur = "blurFunction('lblName')",
+           })
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><label class="BoldTitle" id="lblPosition">Position: </label></td>
+            <td>
+                @Html.DropDownListFor(model => model.PositionsID, (IEnumerable<SelectListItem>)ViewBag.vbPosID, new
+           {
+               id = "PositionsID",
+               tabIndex = 40,
+               onfocus = "focusFunction('lblPosition')",
+               onblur = "blurFunction('lblPosition')",
+           })
+            </td>
+        </tr>
+        <tr><td colspan="2" height="20px"></td></tr>
+        <tr>
+            <td></td>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <input id="btnSave" tabindex="50" value="Save" type="submit" class="clsbutton" onclick="'@Url.Action("EditNamesPositions", "Movies")'" />
+                        </td>
+                        <td>
+                            <input id="btnCancel" tabindex="60" value="Cancel" type="button" class="clsbutton" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

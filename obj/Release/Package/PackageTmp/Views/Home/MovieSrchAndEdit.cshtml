@@ -1,0 +1,155 @@
+﻿@model Movies.Models.MovieV
+@using System.Web.UI.WebControls
+@using System.Data.Entity
+
+@{
+    ViewBag.Title = "MovieSrchAndEdit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Movies.Models.Movie mv = ViewBag.Movie;
+    Movies.Models.MovieCategory mc = ViewBag.MovieCategory;
+    Movies.Models.MovieNamesPosition mnp = ViewBag.MovieNamesPosition;
+    List<Movies.Models.Datagrid> vmList = ViewBag.vmList;
+}
+
+<script type="text/javascript">
+    function focusFunction(ctl) {
+        document.getElementById(ctl).style.background = "darkorchid";
+    }
+
+    function blurFunction(ctl) {
+        document.getElementById(ctl).style.background = "transparent";
+    }
+
+    function blurFunctionButton(ctl) {
+        document.getElementById(ctl).style.background = "darkturquoise";
+    }
+
+    $(document).ready(function ()
+    {
+        var selectCrwTit = $('#ddlCrewTitleID :selected').val();
+
+        $('#ddlCrewTitleID').change(function () {
+            selectCrwTit = $('#ddlCrewTitleID :selected').val();
+//If a crew title is selected then the user cannot enter an actor string since the crew title is Director, Producer, Writer
+            if (selectCrwTit > 0) {
+                $('#txtActor').attr('disabled', 'disabled');
+                $('#txtActor').val('disabled');
+            }
+            else {
+                $('#txtActor').removeAttr('disabled');
+                $('#txtActor').val('');
+            }
+        })
+
+        $('#lstCategory').click(function () {
+            $("#lstCategory option:selected").css("font-weight", "bold");
+        });
+    });
+</script>
+
+<!-- User enters the search criteria.  What movies does he want to display in the resulting datagrid? -->
+@using (Html.BeginForm("Search", "Home"))
+{
+    <div class="BoldTitle">
+        <h2>Movie Search and Edit</h2>
+        <table align="center">
+            <tr>
+                <td valign="top">
+                    <table>
+                        <tr>
+                            <td align="right"><label class="BoldTitle" id="lblMovie">Movie: </label></td>
+                            <td width="1"></td>
+                            <td>
+                                @Html.TextBoxFor(model => model.strMovieTitleSrch, new
+                           {
+                               @class = "txtBox",
+                               id = "txtMovie",
+                               PlaceHolder = "Part of Movie Title",
+                               tabIndex = 10,
+                               maxlength = 40,
+                               onfocus = "focusFunction('lblMovie')",
+                               onblur = "blurFunction('lblMovie')"
+                           })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right"><label class="BoldTitle" id="lblActor">Actor: </label></td>
+                            <td width="1"></td>
+                            <td>
+                                @Html.TextBoxFor(model => model.strActorName, new
+                           {
+                               @class = "txtBox",
+                               id = "txtActor",
+                               PlaceHolder = "Part of Actor Name",
+                               tabIndex = 20,
+                               maxlength = 40,
+                               onfocus = "focusFunction('lblActor')",
+                               onblur = "blurFunction('lblActor')"
+                           })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right"><label class="BoldTitle" id="lblCrew">Crew Member: </label></td>
+                            <td width="1"></td>
+                            <td>
+                                @Html.TextBoxFor(model => model.strCrewName, new
+                           {
+                               @class = "txtBox",
+                               id = "txtCrew",
+                               PlaceHolder = "Part of Crew Name",
+                               tabIndex = 30,
+                               maxlength = 40,
+                               onfocus = "focusFunction('lblCrew')",
+                               onblur = "blurFunction('lblCrew')"
+                           }))
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right"><label class="BoldTitle" id="lblCrewTitle">Crew Title: </label></td>
+                            <td width="1"></td>
+                            <td>
+                                @Html.DropDownListFor(model => model.intCrewTitleID, (IEnumerable<SelectListItem>)ViewBag.intCrewTitleID, new
+                               {
+                                   id = "ddlCrewTitleID",
+                                   tabIndex = 40,
+                                   onfocus = "focusFunction('lblCrewTitle')",
+                                   onblur = "blurFunction('lblCrewTitle')"
+
+                               })
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <td align="right"><label class="BoldTitle" id="lblCategory">Category: </label></td>
+                            <td width="1"></td>
+                            <td>
+                                @Html.ListBoxFor(model => model.SelectedCategories, (IEnumerable<SelectListItem>)ViewBag.intCategoryID,
+                                                                                        new
+                                                                                        {
+                                                                                            @class = "listBox",
+                                                                                            id = "lstCategory",
+                                                                                            tabIndex = 50,
+                                                                                            onfocus = "focusFunction('lblCategory')",
+                                                                                            onblur = "blurFunction('lblCategory')"
+                                                                                        })
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr><td colspan="3" height="20"></td></tr>
+            <tr>
+                <td colspan="3" align="center">
+                    <button id="btnSave" class="clsbutton" type="submit" tabindex="60" onclick="location.href = '@Url.Action(null)'"
+                            onfocus="focusFunction('btnSave')" onblur="blurFunctionButton('btnSave')">
+                        Search
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+
