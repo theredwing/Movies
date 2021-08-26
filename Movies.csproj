@@ -229,6 +229,7 @@
     <Compile Include="Models\Datagrid.cs" />
     <Compile Include="Models\DataGridNamesPosition.cs" />
     <Compile Include="Models\DataGridPositions.cs" />
+    <Compile Include="Models\EditDatagridItem.cs" />
     <Compile Include="Models\EditDescV.cs" />
     <Compile Include="Models\Errors.cs" />
     <Compile Include="Models\FlickrV.cs" />

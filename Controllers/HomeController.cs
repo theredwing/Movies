@@ -28,8 +28,6 @@ namespace Movies.Controllers
     {
         private const int SQLConnection = 2;
         private static Movie mv = new Movie();
-        //private static MovieCategory mvCat = new MovieCategory();
-        //private static MovieNamesPosition mvNamesPosition = new MovieNamesPosition();
         private MovieDBContext db = new MovieDBContext();
         private MovieV mvV = new MovieV(mv);
         IList<MovieV> listmvV = new List<MovieV>();
@@ -48,13 +46,13 @@ namespace Movies.Controllers
             return View();
         }
 
-        public ActionResult MovieSrchAndEdit()
+        public ActionResult MovieSrchAndEdit(MovieV mvV)
         {
             ViewBag.CrewTitle = "";
             ViewBag.Category = "";
             fillPositionDdl();
             fillCategoryDdl();
-            return View();
+            return View(mvV);
         }
 
         public ActionResult MovieImport()
@@ -422,11 +420,6 @@ namespace Movies.Controllers
             dgParams.strCrewNameSrch = mvV.strCrewName;
             dgParams.strCrewTitleSrch = mvV.strCrewTitle;
             MovieV.dgParams = dgParams;
-
-            //MovieV.dgParams.strMovieTitleSrch = mvV.strMovieTitleSrch;
-            //MovieV.dgParams.strActorNameSrch = mvV.strActorName;
-            //MovieV.dgParams.strCrewNameSrch = mvV.strCrewName;
-            //MovieV.dgParams.strCrewTitleSrch = mvV.strCrewTitle;
             ViewBag.DataGridParams = dgParams;
             return View("Datagrid", dg);
         }

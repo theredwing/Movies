@@ -18,9 +18,6 @@ namespace Movies.Controllers
         private List<PositionsLU> Positions = new List<PositionsLU>();
         private List<NamesLU> Names = new List<NamesLU>();
         private static SortingPagingInfo info = new SortingPagingInfo();
-        //private static SortingPagingInfo infoName = new SortingPagingInfo();
-        //private static SortingPagingInfo infoPos = new SortingPagingInfo();
-        //private static SortingPagingInfo infoCat = new SortingPagingInfo();
         private static Additions misc = new Additions();
         private EditDescV edv;
         private AdminV av;
